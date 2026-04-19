@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Phonics Kingdom</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Babel standalone para JSX en el navegador -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Import Map para dependencias -->
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@18.2.0",
+        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+        "lucide-react": "https://esm.sh/lucide-react@0.292.0?deps=react@18.2.0",
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js",
+        "firebase/analytics": "https://www.gstatic.com/firebasejs/10.7.0/firebase-analytics.js"
+      }
+    }
+    </script>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: sans-serif; background-color: #0f172a; }
+        #root { width: 100vw; height: 100vh; }
+        
+        /* Animación para los nodos de sonido */
+        @keyframes pulse-gold {
+            0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.7); }
+            70% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 0 20px rgba(250, 204, 21, 0); }
+            100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); }
+        }
+        .node-unlocked { animation: pulse-gold 2s infinite; }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <!-- Mensaje de carga inicial por si Babel tarda -->
+        <div style="display: flex; align-items: center; justify-content: center; height: 100vh; color: white; flex-direction: column;">
+            <h2 style="font-size: 24px; font-weight: bold;">Loading Phonics Kingdom...</h2>
+            <p>If this screen persists, check the console (F12) or use Live Server.</p>
+        </div>
+    </div>
+
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect, useRef } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { 
+          Castle, Trees, Mountain, Waves, Flame, Lock, Unlock, 
+          ChevronLeft, Volume2, Star, Settings, Cloud, CheckCircle2, AlertTriangle
+        } from 'lucide-react';
+        import { initializeApp } from 'firebase/app';
+        import { getFirestore, doc, setDoc, onSnapshot, getDoc } from 'firebase/firestore';
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
+
+        // --- CONFIGURACIÓN DE DATOS CON TUS NOMBRES DE IMÁGENES EXACTOS ---
+        const PHONEMES_GROUPS = [
+          { id: 1, name: "The Serpent's Forest", icon: Trees, color: "bg-emerald-500", bgImage: "serpiente.jpg", sounds: [
+            { id: 's', char: 's', object: 'Snake', emoji: '🐍', pos: { top: '22%', left: '20%' }, options: ['🐍', '🍎', '🐶'] },
+            { id: 'a', char: 'a', object: 'Ant', emoji: '🐜', pos: { top: '25%', left: '50%' }, options: ['🐜', '🚗', '🎾'] },
+            { id: 't', char: 't', object: 'Tennis', emoji: '🎾', pos: { top: '35%', left: '80%' }, options: ['🎾', '🐍', '☀️'] },
+            { id: 'i', char: 'i', object: 'Ink', emoji: '🖋️', pos: { top: '75%', left: '15%' }, options: ['🖋️', '🐧', '🍎'] },
+            { id: 'p', char: 'p', object: 'Pig', emoji: '🐷', pos: { top: '80%', left: '48%' }, options: ['🐷', '🐜', '🐍'] },
+            { id: 'n', char: 'n', object: 'Net', emoji: '🥅', pos: { top: '80%', left: '85%' }, options: ['🥅', '🎾', '🖋️'] },
+          ]},
+          { id: 2, name: "The Village Square", icon: Castle, color: "bg-amber-500", bgImage: "aldea.jpg", sounds: [
+            { id: 'ck', char: 'c/k', object: 'Cat', emoji: '🐈', pos: { top: '35%', left: '15%' }, options: ['🐈', '🥚', '🎩'] },
+            { id: 'e', char: 'e', object: 'Egg', emoji: '🥚', pos: { top: '25%', left: '48%' }, options: ['🐀', '🥚', '🐕'] },
+            { id: 'h', char: 'h', object: 'Hat', emoji: '🎩', pos: { top: '28%', left: '82%' }, options: ['🎩', '🐈', '🐒'] },
+            { id: 'r', char: 'r', object: 'Rat', emoji: '🐀', pos: { top: '80%', left: '15%' }, options: ['🐒', '🐀', '🥚'] },
+            { id: 'm', char: 'm', object: 'Monkey', emoji: '🐒', pos: { top: '80%', left: '50%' }, options: ['🐕', '🎩', '🐒'] },
+            { id: 'd', char: 'd', object: 'Dog', emoji: '🐕', pos: { top: '75%', left: '85%' }, options: ['🐕', '🐈', '🐀'] },
+          ]},
+          { id: 3, name: "The Whispering River", icon: Waves, color: "bg-cyan-500", bgImage: "rio.jpg", sounds: [
+            { id: 'g', char: 'g', object: 'Goat', emoji: '🐐', pos: { top: '25%', left: '25%' }, options: ['🐐', '🐙', '🦇'] },
+            { id: 'o', char: 'o', object: 'Octopus', emoji: '🐙', pos: { top: '20%', left: '75%' }, options: ['☔', '🐙', '🐟'] },
+            { id: 'u', char: 'u', object: 'Umbrella', emoji: '☔', pos: { top: '55%', left: '16%' }, options: ['🍃', '🐐', '☔'] },
+            { id: 'l', char: 'l', object: 'Leaf', emoji: '🍃', pos: { top: '85%', left: '20%' }, options: ['🍃', '🦇', '🐙'] },
+            { id: 'f', char: 'f', object: 'Fish', emoji: '🐟', pos: { top: '65%', left: '75%' }, options: ['🐐', '🐟', '☔'] },
+            { id: 'b', char: 'b', object: 'Bat', emoji: '🦇', pos: { top: '85%', left: '75%' }, options: ['🦇', '🍃', '🐟'] },
+          ]},
+          { id: 4, name: "Magic Mountains", icon: Mountain, color: "bg-indigo-500", bgImage: "montaña.jpg", sounds: [
+            { id: 'ai', char: 'ai', object: 'Rain', emoji: '🌧️', pos: { top: '30%', left: '22%' }, options: ['🌧️', '🍯', '⛵'] },
+            { id: 'j', char: 'j', object: 'Jam', emoji: '🍯', pos: { top: '20%', left: '50%' }, options: ['👔', '🍯', '🐝'] },
+            { id: 'oa', char: 'oa', object: 'Boat', emoji: '⛵', pos: { top: '28%', left: '80%' }, options: ['⛵', '🌧️', '🍴'] },
+            { id: 'ie', char: 'ie', object: 'Tie', emoji: '👔', pos: { top: '75%', left: '20%' }, options: ['🐝', '👔', '🍯'] },
+            { id: 'ee', char: 'ee', object: 'Bee', emoji: '🐝', pos: { top: '65%', left: '50%' }, options: ['🐝', '⛵', '🌧️'] },
+            { id: 'or', char: 'or', object: 'Fork', emoji: '🍴', pos: { top: '75%', left: '80%' }, options: ['🍴', '👔', '⛵'] },
+          ]},
+          { id: 5, name: "The Crystal Caves", icon: Cloud, color: "bg-purple-500", bgImage: "cueva.jpg", sounds: [
+            { id: 'z', char: 'z', object: 'Zebra', emoji: '🦓', pos: { top: '22%', left: '18%' }, options: ['🦓', '🕸️', '💍'] },
+            { id: 'w', char: 'w', object: 'Web', emoji: '🕸️', pos: { top: '25%', left: '48%' }, options: ['🚐', '🕸️', '📖'] },
+            { id: 'ng', char: 'ng', object: 'Ring', emoji: '💍', pos: { top: '25%', left: '82%' }, options: ['💍', '🦓', '🌕'] },
+            { id: 'v', char: 'v', object: 'Van', emoji: '🚐', pos: { top: '70%', left: '20%' }, options: ['📖', '🚐', '🕸️'] },
+            { id: 'oo1', char: 'oo', object: 'Book', emoji: '📖', pos: { top: '75%', left: '50%' }, options: ['📖', '💍', '🦓'] },
+            { id: 'oo2', char: 'OO', object: 'Moon', emoji: '🌕', pos: { top: '75%', left: '82%' }, options: ['🌕', '🚐', '💍'] },
+          ]},
+          { id: 6, name: "Dragon's Lair", icon: Flame, color: "bg-rose-500", bgImage: "dragon.jpg", sounds: [
+            { id: 'y', char: 'y', object: 'Yo-yo', emoji: '🪀', pos: { top: '75%', left: '15%' }, options: ['🪀', '🦊', '🧀'] },
+            { id: 'x', char: 'x', object: 'Fox', emoji: '🦊', pos: { top: '75%', left: '38%' }, options: ['🐑', '🦊', '👍'] },
+            { id: 'ch', char: 'ch', object: 'Cheese', emoji: '🧀', pos: { top: '75%', left: '65%' }, options: ['🧀', '🪀', '🪶'] },
+            { id: 'sh', char: 'sh', object: 'Sheep', emoji: '🐑', pos: { top: '35%', left: '35%' }, options: ['👍', '🐑', '🦊'] },
+            { id: 'th1', char: 'th', object: 'Thumb', emoji: '👍', pos: { top: '45%', left: '60%' }, options: ['👍', '🧀', '🪀'] },
+            { id: 'th2', char: 'TH', object: 'Feather', emoji: '🪶', pos: { top: '55%', left: '85%' }, options: ['🪶', '🐑', '👍'] },
+          ]},
+          { id: 7, name: "The Royal Throne", icon: CheckCircle2, color: "bg-blue-600", bgImage: "trono.jpg", sounds: [
+            { id: 'qu', char: 'qu', object: 'Queen', emoji: '👑', pos: { top: '42%', left: '16%' }, options: ['👑', '☁️', '🪙'] },
+            { id: 'ou', char: 'ou', object: 'Cloud', emoji: '☁️', pos: { top: '42%', left: '84%' }, options: ['🛟', '☁️', '🧜‍♀️'] },
+            { id: 'oi', char: 'oi', object: 'Coin', emoji: '🪙', pos: { top: '56%', left: '68%' }, options: ['🪙', '👑', '⭐'] },
+            { id: 'ue', char: 'ue', object: 'Rescue', emoji: '🛟', pos: { top: '78%', left: '16%' }, options: ['⭐', '🛟', '☁️'] },
+            { id: 'er', char: 'er', object: 'Mermaid', emoji: '🧜‍♀️', pos: { top: '78%', left: '84%' }, options: ['🧜‍♀️', '🪙', '👑'] },
+            { id: 'ar', char: 'ar', object: 'Star', emoji: '⭐', pos: { top: '22%', left: '50%' }, options: ['⭐', '🛟', '🧜‍♀️'] },
+          ]},
+        ];
+
+        // --- FIREBASE CONFIG ---
+        const firebaseConfig = {
+          apiKey: "AIzaSyDhE1bTXJr9hIItxpcHeH-0tconwCEzSOg",
+          authDomain: "jollphonics.firebaseapp.com",
+          projectId: "jollphonics",
+          storageBucket: "jollphonics.firebasestorage.app",
+          messagingSenderId: "448702662939",
+          appId: "1:448702662939:web:078fcf8b1087daba20abbe",
+          measurementId: "G-DFJK9SVTTR"
+        };
+
+        const appInstance = initializeApp(firebaseConfig);
+        const auth = getAuth(appInstance);
+        const db = getFirestore(appInstance);
+        
+        function App() {
+          const [view, setView] = useState('loading'); 
+          const [user, setUser] = useState(null);
+          const [progress, setProgress] = useState({});
+          const [currentGroup, setCurrentGroup] = useState(null);
+          const [currentSound, setCurrentSound] = useState(null);
+          const [phase, setPhase] = useState(1); 
+          const canvasRef = useRef(null);
+
+          // 1. Manejo de Autenticación
+          useEffect(() => {
+            if (!auth) {
+                setView('start');
+                return;
+            }
+
+            const initAuth = async () => {
+              try {
+                await signInAnonymously(auth);
+              } catch (e) { 
+                console.error("Auth error", e); 
+                // Si falla por configuración local, forzamos inicio
+                setView(prev => prev === 'loading' ? 'start' : prev);
+              }
+            };
+            initAuth();
+
+            const unsubscribe = onAuthStateChanged(auth, (u) => {
+              setUser(u);
+            });
+
+            // FAILSAFE: Si en 3 segundos no ha cargado nada, forzamos la entrada al juego
+            const fallbackTimer = setTimeout(() => {
+                setView(prev => prev === 'loading' ? 'start' : prev);
+            }, 3000);
+
+            return () => {
+                unsubscribe();
+                clearTimeout(fallbackTimer);
+            };
+          }, []);
+
+          // 2. Sincronización con Firestore
+          useEffect(() => {
+            if (!user || !db) return;
+            
+            const docRef = doc(db, 'jollyphonics', 'gameProgress');
+            
+            const unsubscribe = onSnapshot(docRef, (docSnap) => {
+              if (docSnap.exists()) {
+                setProgress(docSnap.data());
+              } else {
+                setDoc(docRef, {}).catch(e => console.log("Write init handled"));
+              }
+              // Entramos al juego exitosamente
+              setView(prev => prev === 'loading' ? 'start' : prev);
+            }, (error) => {
+              console.error("Firestore Permission/Sync error:", error);
+              // Si hay error de permisos de lectura, mostramos la app de todos modos
+              setView(prev => prev === 'loading' ? 'start' : prev);
+            });
+            
+            return () => unsubscribe();
+          }, [user, db]);
+
+          const updateProgress = async (soundId, status) => {
+            const newProgress = { ...progress, [soundId]: status };
+            if (!status) delete newProgress[soundId];
+            
+            // Actualizamos la UI inmediatamente (Optimistic Update)
+            setProgress(newProgress);
+            
+            if (!user || !db) return;
+            
+            const docRef = doc(db, 'jollyphonics', 'gameProgress');
+            try { 
+              await setDoc(docRef, newProgress); 
+            } catch (e) { 
+              console.error("Error guardando en Firebase (Revisa las reglas):", e); 
+            }
+          };
+
+          const playTTS = (text) => {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-GB';
+            utterance.rate = 0.6;
+            window.speechSynthesis.speak(utterance);
+          };
+
+          // --- TRACING ---
+          const [isDrawing, setIsDrawing] = useState(false);
+          const startDrawing = (e) => {
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+            const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            setIsDrawing(true);
+          };
+          const draw = (e) => {
+            if (!isDrawing) return;
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+            const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+            ctx.lineTo(x, y);
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 15;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+          };
+
+          if (view === 'loading') return <div className="h-screen w-screen bg-slate-900 flex items-center justify-center text-white font-bold text-2xl">Summoning Phonics Kingdom...</div>;
+
+          if (view === 'start') {
+            return (
+              <div className="h-screen w-screen bg-gradient-to-b from-sky-400 to-blue-600 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+                <Cloud className="absolute top-10 left-10 text-white opacity-40 w-24 h-24 animate-pulse" />
+                <div className="z-10 text-center">
+                  <h1 className="text-7xl font-black text-white drop-shadow-2xl mb-2 tracking-tighter italic">PHONICS KINGDOM</h1>
+                  <p className="text-white text-2xl font-medium mb-12 drop-shadow-md">Unlock the magic of sounds!</p>
+                  <button onClick={() => setView('map')} className="px-12 py-6 bg-yellow-400 hover:bg-yellow-300 rounded-3xl border-b-8 border-yellow-600 active:translate-y-2 transition-all shadow-2xl">
+                    <span className="text-4xl font-bold text-yellow-900 flex items-center gap-4"><Castle className="w-10 h-10" /> EXPLORE NOW</span>
+                  </button>
+                  <button onClick={() => setView('teacher')} className="block mx-auto mt-12 text-blue-100 hover:text-white underline font-bold">Teacher Dashboard</button>
+                </div>
+              </div>
+            );
+          }
+
+          if (view === 'teacher') {
+            return (
+              <div className="h-screen w-screen bg-slate-100 flex flex-col p-8 overflow-y-auto">
+                <div className="flex justify-between items-center mb-8 bg-white p-6 rounded-3xl shadow-sm">
+                  <h2 className="text-3xl font-black text-slate-800">Teacher Control Panel</h2>
+                  <button onClick={() => setView('start')} className="p-4 bg-slate-200 rounded-full hover:bg-slate-300"><ChevronLeft/></button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {PHONEMES_GROUPS.map(group => {
+                    const GroupIcon = group.icon;
+                    return (
+                      <div key={group.id} className="bg-white p-6 rounded-3xl shadow-lg border-2 border-slate-200">
+                        <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                          <GroupIcon className="w-6 h-6" /> {group.name}
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                          {group.sounds.map(s => (
+                            <button key={s.id} onClick={() => updateProgress(s.id, progress[s.id] ? null : 'unlocked')}
+                              className={`p-3 rounded-xl font-bold border-2 transition-all ${progress[s.id] ? 'bg-blue-500 text-white border-blue-600 scale-105' : 'bg-slate-100 text-slate-400 border-slate-200 opacity-50'}`}>{s.char}</button>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          }
+
+          if (view === 'map') {
+            return (
+              <div className="h-screen w-screen bg-sky-300 overflow-hidden relative flex flex-col items-center">
+                <div className="absolute top-6 left-6 z-20 flex gap-4">
+                   <button onClick={() => setView('start')} className="p-4 bg-white/90 rounded-full shadow-xl"><ChevronLeft/></button>
+                   <div className="bg-white/90 px-6 py-4 rounded-full shadow-xl font-black text-blue-800 flex items-center gap-2">
+                      <Star className="text-yellow-500 fill-yellow-500" /> {Object.values(progress).filter(v => v === 'completed').length} / 42 Recovered
+                   </div>
+                </div>
+                <div className="relative w-full h-full flex items-center justify-center scale-[0.8] md:scale-100">
+                  {PHONEMES_GROUPS.map((group, idx) => {
+                    const angle = (idx / PHONEMES_GROUPS.length) * Math.PI * 2;
+                    const x = Math.cos(angle) * 320;
+                    const y = Math.sin(angle) * 320;
+                    const GroupIcon = group.icon;
+                    return (
+                      <div key={group.id} onClick={() => { setCurrentGroup(group); setView('zone'); }} className="absolute transition-all cursor-pointer group" style={{ transform: `translate(${x}px, ${y}px)` }}>
+                        <div className={`relative w-48 h-48 rounded-full ${group.color} border-b-[20px] border-black/20 shadow-2xl flex flex-col items-center justify-center p-4 transform group-hover:scale-110 transition-all`}>
+                           <div className="text-white mb-2"><GroupIcon className="w-8 h-8" /></div>
+                           <div className="text-white font-black text-center text-sm uppercase">{group.name}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <div className="z-10 w-64 h-64 bg-slate-200 rounded-full border-b-[30px] border-black/20 shadow-2xl flex flex-col items-center justify-center p-4 border-8 border-white group">
+                     <Castle className="w-24 h-24 text-slate-700 animate-bounce" />
+                     <div className="font-black text-slate-800 text-2xl">ㅤㅤKINGDOM ㅤㅤHALL</div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (view === 'zone') {
+            const GroupIcon = currentGroup.icon;
+            return (
+              <div className="h-screen w-screen bg-slate-900 flex items-center justify-center overflow-hidden transition-all animate-in fade-in duration-700 relative">
+                
+                {/* Header Superior (Independiente de la imagen) */}
+                <div className="absolute top-0 left-0 w-full p-4 md:p-8 flex justify-between items-center z-30">
+                  <button onClick={() => setView('map')} className="p-3 md:p-4 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/40 shadow-xl border border-white/30 transition-all hover:scale-105">
+                    <ChevronLeft className="w-6 h-6 md:w-8 md:h-8"/>
+                  </button>
+                  <h2 className="text-2xl md:text-5xl font-black text-white uppercase flex items-center gap-2 md:gap-4 drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">
+                    <GroupIcon className="w-8 h-8 md:w-12 md:h-12 text-yellow-400" /> {currentGroup.name}
+                  </h2>
+                  <div className="w-12 md:w-16"></div>
+                </div>
+
+                {/* CONTENEDOR MÁGICO 1:1 - Mantiene las proporciones de la imagen intactas */}
+                <div className="relative max-w-full max-h-screen flex items-center justify-center shadow-2xl">
+                    
+                    <img 
+                        src={currentGroup.bgImage} 
+                        alt={currentGroup.name} 
+                        className="max-w-full max-h-screen object-contain block" 
+                    />
+                    
+                    {/* Overlay oscuro para darle contraste (opcional) */}
+                    <div className="absolute inset-0 bg-black/10 pointer-events-none"></div>
+
+                    {/* Capa de Nodos - Al estar en absolute inset-0 sobre la imagen, calca sus medidas al milímetro */}
+                    <div className="absolute inset-0 z-10">
+                      {currentGroup.sounds.map((s, index) => {
+                        const isUnlocked = progress[s.id] === 'unlocked' || progress[s.id] === 'completed';
+                        const isCompleted = progress[s.id] === 'completed';
+                        return (
+                          <div key={s.id} onClick={() => isUnlocked && (setCurrentSound(s), setPhase(1), setView('activity'))}
+                            className={`absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-300 hover:scale-110 group ${!isUnlocked && 'opacity-80 grayscale hover:scale-100'}`}
+                            style={{ top: s.pos.top, left: s.pos.left }}>
+                            
+                            <div className={`relative w-16 h-16 md:w-28 md:h-28 rounded-full border-4 md:border-8 ${isCompleted ? 'border-yellow-400 bg-yellow-500 shadow-2xl' : isUnlocked ? 'border-blue-300 bg-blue-500 node-unlocked shadow-2xl' : 'border-slate-400 bg-slate-700 shadow-xl'} flex flex-col items-center justify-center transition-all`}>
+                               {!isUnlocked ? <Lock className="w-6 h-6 md:w-10 md:h-10 text-white/50" /> : <><div className="text-3xl md:text-6xl font-black text-white drop-shadow-md">{s.char}</div>{isCompleted && <Star className="absolute -top-3 -right-3 md:-top-4 md:-right-4 text-yellow-300 fill-yellow-300 w-8 h-8 md:w-14 md:h-14 animate-pulse drop-shadow-[0_0_15px_rgba(253,224,71,0.8)]" />}</>}
+                            </div>
+                            
+                            <div className="absolute -bottom-4 md:-bottom-5 left-1/2 transform -translate-x-1/2 bg-white text-slate-800 text-xs md:text-sm font-black px-2 md:px-3 py-0.5 md:py-1 rounded-full shadow-lg">{index + 1}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (view === 'activity') {
+            return (
+              <div className="h-screen w-screen bg-slate-50 flex flex-col">
+                <div className="p-6 bg-white border-b-4 border-slate-200 flex justify-between items-center">
+                  <button onClick={() => setView('zone')} className="p-3 bg-slate-100 rounded-2xl hover:bg-slate-200"><ChevronLeft/></button>
+                  <div className="flex gap-4">
+                    {[1,2,3].map(i => <div key={i} className={`w-10 h-10 md:w-12 md:h-12 rounded-full border-4 flex items-center justify-center font-bold ${phase >= i ? 'border-blue-500 bg-blue-50 text-blue-600' : 'border-slate-200 text-slate-300'}`}>{i}</div>)}
+                  </div>
+                  <div className="w-10"></div>
+                </div>
+                <div className="flex-1 flex flex-col items-center justify-center p-8">
+                  {phase === 1 && (
+                    <div className="text-center animate-in zoom-in duration-300">
+                       <div className="text-[10rem] md:text-[15rem] font-black text-blue-600 leading-none mb-12 drop-shadow-2xl">{currentSound.char}</div>
+                       <button onClick={() => playTTS(currentSound.char)} className="w-24 h-24 md:w-32 md:h-32 bg-blue-500 hover:bg-blue-400 rounded-full shadow-2xl flex items-center justify-center text-white transition-all"><Volume2 className="w-12 h-12 md:w-16 md:h-16" /></button>
+                       <button onClick={() => setPhase(2)} className="mt-12 block mx-auto px-12 py-4 bg-emerald-500 text-white font-black text-xl md:text-2xl rounded-2xl md:rounded-3xl uppercase">I heard it!</button>
+                    </div>
+                  )}
+                  {phase === 2 && (
+                    <div className="text-center animate-in slide-in-from-right duration-300 w-full max-w-4xl">
+                       <h3 className="text-2xl md:text-3xl font-black text-slate-400 mb-12 uppercase tracking-widest italic">Find the {currentSound.object}</h3>
+                       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                         {currentSound.options.map((opt, i) => (
+                           <button key={i} onClick={() => opt === currentSound.emoji ? setPhase(3) : playTTS("Try again!")}
+                            className="aspect-square bg-white border-4 border-slate-200 rounded-[2rem] md:rounded-[3rem] text-7xl md:text-9xl flex items-center justify-center hover:scale-105 shadow-xl transition-all">{opt}</button>
+                         ))}
+                       </div>
+                    </div>
+                  )}
+                  {phase === 3 && (
+                    <div className="text-center animate-in slide-in-from-bottom duration-300">
+                       <h3 className="text-2xl md:text-3xl font-black text-slate-400 mb-8 uppercase">Magic Trace</h3>
+                       <div className="relative bg-white rounded-[2rem] md:rounded-[3rem] p-4 shadow-2xl border-4 border-slate-200 flex justify-center">
+                          <div className="absolute inset-0 flex items-center justify-center text-[12rem] md:text-[18rem] text-slate-100 font-black pointer-events-none select-none">{currentSound.char}</div>
+                          <canvas ref={canvasRef} width={350} height={350} onMouseDown={startDrawing} onMouseMove={draw} onMouseUp={() => setIsDrawing(false)} onTouchStart={startDrawing} onTouchMove={draw} onTouchEnd={() => setIsDrawing(false)} className="relative z-10 touch-none max-w-full h-auto" />
+                       </div>
+                       <button onClick={() => { updateProgress(currentSound.id, 'completed'); setView('zone'); }} className="mt-12 px-16 py-6 bg-yellow-400 text-yellow-900 font-black text-2xl md:text-3xl rounded-[2rem] uppercase">DONE! ✨</button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          }
+          return null;
+        }
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
