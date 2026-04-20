@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Phonics Kingdom</title>
+    <title>The Sound Kingdom</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -42,7 +42,7 @@
     <div id="root">
         <!-- Mensaje de carga inicial por si Babel tarda -->
         <div style="display: flex; align-items: center; justify-content: center; height: 100vh; color: white; flex-direction: column;">
-            <h2 style="font-size: 24px; font-weight: bold;">Loading The Phonics Kingdom...</h2>
+            <h2 style="font-size: 24px; font-weight: bold;">Loading The Sound Kingdom...</h2>
             <p>If this screen persists, check the console (F12) or use Live Server.</p>
         </div>
     </div>
@@ -76,7 +76,7 @@
             { id: 'm', char: 'm', object: 'Monkey', emoji: '🐒', pos: { top: '80%', left: '50%' }, options: ['🐕', '🎩', '🐒'] },
             { id: 'd', char: 'd', object: 'Dog', emoji: '🐕', pos: { top: '75%', left: '85%' }, options: ['🐕', '🐈', '🐀'] },
           ]},
-          { id: 3, name: "The Whispering River", icon: Waves, color: "bg-cyan-500", bgImage: "rio.jpg", sounds: [
+          { id: 3, name: "The River", icon: Waves, color: "bg-cyan-500", bgImage: "rio.jpg", sounds: [
             { id: 'g', char: 'g', object: 'Goat', emoji: '🐐', pos: { top: '25%', left: '25%' }, options: ['🐐', '🐙', '🦇'] },
             { id: 'o', char: 'o', object: 'Octopus', emoji: '🐙', pos: { top: '20%', left: '75%' }, options: ['☔', '🐙', '🐟'] },
             { id: 'u', char: 'u', object: 'Umbrella', emoji: '☔', pos: { top: '55%', left: '16%' }, options: ['🍃', '🐐', '☔'] },
@@ -92,7 +92,7 @@
             { id: 'ee', char: 'ee', object: 'Bee', emoji: '🐝', pos: { top: '65%', left: '50%' }, options: ['🐝', '⛵', '🌧️'] },
             { id: 'or', char: 'or', object: 'Fork', emoji: '🍴', pos: { top: '75%', left: '80%' }, options: ['🍴', '👔', '⛵'] },
           ]},
-          { id: 5, name: "The Crystal Caves", icon: Cloud, color: "bg-purple-500", bgImage: "cueva.jpg", sounds: [
+          { id: 5, name: "The Caves", icon: Cloud, color: "bg-purple-500", bgImage: "cueva.jpg", sounds: [
             { id: 'z', char: 'z', object: 'Zebra', emoji: '🦓', pos: { top: '22%', left: '18%' }, options: ['🦓', '🕸️', '💍'] },
             { id: 'w', char: 'w', object: 'Web', emoji: '🕸️', pos: { top: '25%', left: '48%' }, options: ['🚐', '🕸️', '📖'] },
             { id: 'ng', char: 'ng', object: 'Ring', emoji: '💍', pos: { top: '25%', left: '82%' }, options: ['💍', '🦓', '🌕'] },
@@ -251,14 +251,14 @@
             ctx.stroke();
           };
 
-          if (view === 'loading') return <div className="h-screen w-screen bg-slate-900 flex items-center justify-center text-white font-bold text-2xl">Summoning The Phonics Kingdom...</div>;
+          if (view === 'loading') return <div className="h-screen w-screen bg-slate-900 flex items-center justify-center text-white font-bold text-2xl">Summoning The Sound Kingdom...</div>;
 
           if (view === 'start') {
             return (
               <div className="h-screen w-screen bg-gradient-to-b from-sky-400 to-blue-600 flex flex-col items-center justify-center p-4 relative overflow-hidden">
                 <Cloud className="absolute top-10 left-10 text-white opacity-40 w-24 h-24 animate-pulse" />
                 <div className="z-10 text-center">
-                  <h1 className="text-7xl font-black text-white drop-shadow-2xl mb-2 tracking-tighter italic">THE PHONICS KINGDOM</h1>
+                  <h1 className="text-7xl font-black text-white drop-shadow-2xl mb-2 tracking-tighter italic">THE SOUND KINGDOM</h1>
                   <p className="text-white text-2xl font-medium mb-12 drop-shadow-md">Unlock the magic of sounds!</p>
                   <button onClick={() => setView('map')} className="px-12 py-6 bg-yellow-400 hover:bg-yellow-300 rounded-3xl border-b-8 border-yellow-600 active:translate-y-2 transition-all shadow-2xl">
                     <span className="text-4xl font-bold text-yellow-900 flex items-center gap-4"><Castle className="w-10 h-10" /> EXPLORE NOW</span>
@@ -324,7 +324,7 @@
                   })}
                   <div className="z-10 w-64 h-64 bg-slate-200 rounded-full border-b-[30px] border-black/20 shadow-2xl flex flex-col items-center justify-center p-4 border-8 border-white group">
                      <Castle className="w-24 h-24 text-slate-700 animate-bounce" />
-                     <div className="font-black text-slate-800 text-2xl">ㅤㅤKINGDOM ㅤㅤPLACES</div>
+                     <div className="font-black text-slate-800 text-2xl">ㅤㅤKINGDOM ㅤㅤLOCATIONS</div>
                   </div>
                 </div>
               </div>
