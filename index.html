@@ -61,72 +61,64 @@
         // ============================================================================
         // 🛠️ ZONA DE CONFIGURACIÓN MANUAL DE SONIDOS Y LETRAS 🛠️
         // Puedes cambiar libremente cualquier letra, palabra o emoji desde aquí.
-        //
-        // ¿Cómo funciona cada parámetro?
-        // char: 's'       -> Es el sonido/letra que aparece en grande y que lee el sistema.
-        // object: 'Snake' -> La palabra usada en el minijuego de buscar ("Find the Snake").
-        // emoji: '🐍'     -> El emoji que representa la respuesta correcta en el minijuego.
-        // options: [...]  -> Las 3 opciones del minijuego (¡Asegúrate de incluir el emoji correcto aquí!).
-        // pos: {top, left}-> Coordenadas donde se ubica el botón sobre tu imagen.
-        // bgImage: '...'  -> El nombre exacto de la imagen de fondo en tu carpeta.
         // ============================================================================
         
         const PHONEMES_GROUPS = [
           { id: 1, name: "The Forest", icon: Trees, color: "bg-emerald-500", bgImage: "serpiente.jpeg", sounds: [
-            { id: 's', char: 's', object: 'Snake', emoji: '🐍', pos: { top: '80%', left: '9%' }, options: ['🐍', '🍎', '🐶'] },
-            { id: 'a', char: 'a', object: 'Ant', emoji: '🐜', pos: { top: '88%', left: '28%' }, options: ['🐜', '🚗', '🎾'] },
-            { id: 't', char: 't', object: 'Tennis', emoji: '🎾', pos: { top: '76%', left: '42%' }, options: ['🎾', '🐍', '☀️'] },
-            { id: 'i', char: 'i', object: 'Ink', emoji: '🖋️', pos: { top: '88%', left: '59%' }, options: ['🖋️', '🐧', '🍎'] },
-            { id: 'p', char: 'p', object: 'Pig', emoji: '🐷', pos: { top: '76%', left: '72%' }, options: ['🐷', '🐜', '🐍'] },
-            { id: 'n', char: 'n', object: 'Net', emoji: '🥅', pos: { top: '82%', left: '86%' }, options: ['🥅', '🎾', '🖋️'] },
+            { id: 's', char: 's', object: 'Snake', emoji: '🐍', pos: { top: '80%', left: '9%' }, options: ['🐍', '🍎', '🐶'], audioFile: 'S.ogg' },
+            { id: 'a', char: 'a', object: 'Ant', emoji: '🐜', pos: { top: '88%', left: '28%' }, options: ['🐜', '🚗', '🎾'], audioFile: 'A.ogg' },
+            { id: 't', char: 't', object: 'Tennis', emoji: '🎾', pos: { top: '76%', left: '42%' }, options: ['🎾', '🐍', '☀️'], audioFile: 'T.ogg' },
+            { id: 'i', char: 'i', object: 'Ink', emoji: '🖋️', pos: { top: '88%', left: '59%' }, options: ['🖋️', '🐧', '🍎'], audioFile: 'I.ogg' },
+            { id: 'p', char: 'p', object: 'Pig', emoji: '🐷', pos: { top: '76%', left: '72%' }, options: ['🐷', '🐜', '🐍'], audioFile: 'P.ogg' },
+            { id: 'n', char: 'n', object: 'Net', emoji: '🥅', pos: { top: '82%', left: '86%' }, options: ['🥅', '🎾', '🖋️'], audioFile: 'N.ogg' },
           ]},
           { id: 2, name: "The Farm", icon: Castle, color: "bg-amber-500", bgImage: "aldea.jpeg", sounds: [
-            { id: 'ck', char: 'c/k', object: 'Cat', emoji: '🐈', pos: { top: '55%', left: '20%' }, options: ['🐈', '🥚', '🎩'] },
-            { id: 'e', char: 'e', object: 'Egg', emoji: '🥚', pos: { top: '85%', left: '36%' }, options: ['🐀', '🥚', '🐕'] },
-            { id: 'h', char: 'h', object: 'Hat', emoji: '🎩', pos: { top: '65%', left: '48%' }, options: ['🎩', '🐈', '🐒'] },
-            { id: 'r', char: 'r', object: 'Rat', emoji: '🐀', pos: { top: '85%', left: '60%' }, options: ['🐒', '🐀', '🥚'] },
-            { id: 'm', char: 'm', object: 'Monkey', emoji: '🐒', pos: { top: '65%', left: '73%' }, options: ['🐕', '🎩', '🐒'] },
-            { id: 'd', char: 'd', object: 'Dog', emoji: '🐕', pos: { top: '85%', left: '87%' }, options: ['🐕', '🐈', '🐀'] },
+            { id: 'ck', char: 'c/k', object: 'Cat', emoji: '🐈', pos: { top: '55%', left: '20%' }, options: ['🐈', '🥚', '🎩'], audioFile: 'CK.ogg' },
+            { id: 'e', char: 'e', object: 'Egg', emoji: '🥚', pos: { top: '85%', left: '36%' }, options: ['🐀', '🥚', '🐕'], audioFile: 'E.ogg' },
+            { id: 'h', char: 'h', object: 'Hat', emoji: '🎩', pos: { top: '65%', left: '48%' }, options: ['🎩', '🐈', '🐒'], audioFile: 'H.ogg' },
+            { id: 'r', char: 'r', object: 'Rat', emoji: '🐀', pos: { top: '85%', left: '60%' }, options: ['🐒', '🐀', '🥚'], audioFile: 'R.ogg' },
+            { id: 'm', char: 'm', object: 'Monkey', emoji: '🐒', pos: { top: '65%', left: '73%' }, options: ['🐕', '🎩', '🐒'], audioFile: 'M.ogg' },
+            { id: 'd', char: 'd', object: 'Dog', emoji: '🐕', pos: { top: '85%', left: '87%' }, options: ['🐕', '🐈', '🐀'], audioFile: 'D.ogg' },
           ]},
           { id: 3, name: "The River", icon: Waves, color: "bg-cyan-500", bgImage: "rio.jpeg", sounds: [
-            { id: 'g', char: 'g', object: 'Goat', emoji: '🐐', pos: { top: '78%', left: '8%' }, options: ['🐐', '🐙', '🦇'] },
-            { id: 'o', char: 'o', object: 'Octopus', emoji: '🐙', pos: { top: '90%', left: '23%' }, options: ['☔', '🐙', '🐟'] },
-            { id: 'u', char: 'u', object: 'Umbrella', emoji: '☔', pos: { top: '60%', left: '38%' }, options: ['🍃', '🐐', '☔'] },
-            { id: 'l', char: 'l', object: 'Leaf', emoji: '🍃', pos: { top: '60%', left: '62%' }, options: ['🍃', '🦇', '🐙'] },
-            { id: 'f', char: 'f', object: 'Fish', emoji: '🐟', pos: { top: '72%', left: '78%' }, options: ['🐐', '🐟', '☔'] },
-            { id: 'b', char: 'b', object: 'Bat', emoji: '🦇', pos: { top: '80%', left: '92%' }, options: ['🦇', '🍃', '🐟'] },
+            { id: 'g', char: 'g', object: 'Goat', emoji: '🐐', pos: { top: '78%', left: '8%' }, options: ['🐐', '🐙', '🦇'], audioFile: 'G.ogg' },
+            { id: 'o', char: 'o', object: 'Octopus', emoji: '🐙', pos: { top: '90%', left: '23%' }, options: ['☔', '🐙', '🐟'], audioFile: 'O.ogg' },
+            { id: 'u', char: 'u', object: 'Umbrella', emoji: '☔', pos: { top: '60%', left: '38%' }, options: ['🍃', '🐐', '☔'], audioFile: 'U.ogg' },
+            { id: 'l', char: 'l', object: 'Leaf', emoji: '🍃', pos: { top: '60%', left: '62%' }, options: ['🍃', '🦇', '🐙'], audioFile: 'L.ogg' },
+            { id: 'f', char: 'f', object: 'Fish', emoji: '🐟', pos: { top: '72%', left: '78%' }, options: ['🐐', '🐟', '☔'], audioFile: 'F.ogg' },
+            { id: 'b', char: 'b', object: 'Bat', emoji: '🦇', pos: { top: '80%', left: '92%' }, options: ['🦇', '🍃', '🐟'], audioFile: 'B.ogg' },
           ]},
           { id: 4, name: "The Lakes", icon: Mountain, color: "bg-indigo-500", bgImage: "montaña.jpeg", sounds: [
-            { id: 'ai', char: 'ai', object: 'Rain', emoji: '🌧️', pos: { top: '58%', left: '9%' }, options: ['🌧️', '🍯', '⛵'] },
-            { id: 'j', char: 'j', object: 'Jam', emoji: '🍯', pos: { top: '88%', left: '18%' }, options: ['👔', '🍯', '🐝'] },
-            { id: 'oa', char: 'oa', object: 'Boat', emoji: '⛵', pos: { top: '60%', left: '31%' }, options: ['⛵', '🌧️', '🍴'] },
-            { id: 'ie', char: 'ie', object: 'Tie', emoji: '👔', pos: { top: '88%', left: '54%' }, options: ['🐝', '👔', '🍯'] },
-            { id: 'ee', char: 'ee', object: 'Bee', emoji: '🐝', pos: { top: '60%', left: '68%' }, options: ['🐝', '⛵', '🌧️'] },
-            { id: 'or', char: 'or', object: 'Fork', emoji: '🍴', pos: { top: '88%', left: '90%' }, options: ['🍴', '👔', '⛵'] },
+            { id: 'ai', char: 'ai', object: 'Rain', emoji: '🌧️', pos: { top: '58%', left: '9%' }, options: ['🌧️', '🍯', '⛵'], audioFile: 'AI.ogg' },
+            { id: 'j', char: 'j', object: 'Jam', emoji: '🍯', pos: { top: '88%', left: '18%' }, options: ['👔', '🍯', '🐝'], audioFile: 'J.ogg' },
+            { id: 'oa', char: 'oa', object: 'Boat', emoji: '⛵', pos: { top: '60%', left: '31%' }, options: ['⛵', '🌧️', '🍴'], audioFile: 'OA.ogg' },
+            { id: 'ie', char: 'ie', object: 'Tie', emoji: '👔', pos: { top: '88%', left: '54%' }, options: ['🐝', '👔', '🍯'], audioFile: 'IE.ogg' },
+            { id: 'ee', char: 'ee', object: 'Bee', emoji: '🐝', pos: { top: '60%', left: '68%' }, options: ['🐝', '⛵', '🌧️'], audioFile: 'EE.ogg' },
+            { id: 'or', char: 'or', object: 'Fork', emoji: '🍴', pos: { top: '88%', left: '90%' }, options: ['🍴', '👔', '⛵'], audioFile: 'OR.ogg' },
           ]},
           { id: 5, name: "The Caves", icon: Cloud, color: "bg-purple-500", bgImage: "cueva.jpeg", sounds: [
-            { id: 'z', char: 'z', object: 'Zebra', emoji: '🦓', pos: { top: '28%', left: '15%' }, options: ['🦓', '🕸️', '💍'] },
-            { id: 'w', char: 'w', object: 'Web', emoji: '🕸️', pos: { top: '68%', left: '18%' }, options: ['🚐', '🕸️', '📖'] },
-            { id: 'ng', char: 'ng', object: 'Ring', emoji: '💍', pos: { top: '90%', left: '32%' }, options: ['💍', '🦓', '🌕'] },
-            { id: 'v', char: 'v', object: 'Van', emoji: '🚐', pos: { top: '72%', left: '53%' }, options: ['📖', '🚐', '🕸️'] },
-            { id: 'oo1', char: 'oo', object: 'Book', emoji: '📖', pos: { top: '45%', left: '68%' }, options: ['📖', '💍', '🦓'] },
-            { id: 'oo2', char: 'OO', object: 'Moon', emoji: '🌕', pos: { top: '90%', left: '78%' }, options: ['🌕', '🚐', '💍'] },
+            { id: 'z', char: 'z', object: 'Zebra', emoji: '🦓', pos: { top: '28%', left: '15%' }, options: ['🦓', '🕸️', '💍'], audioFile: 'Z.ogg' },
+            { id: 'w', char: 'w', object: 'Web', emoji: '🕸️', pos: { top: '68%', left: '18%' }, options: ['🚐', '🕸️', '📖'], audioFile: 'W.ogg' },
+            { id: 'ng', char: 'ng', object: 'Ring', emoji: '💍', pos: { top: '90%', left: '32%' }, options: ['💍', '🦓', '🌕'], audioFile: 'NG.ogg' },
+            { id: 'v', char: 'v', object: 'Van', emoji: '🚐', pos: { top: '72%', left: '53%' }, options: ['📖', '🚐', '🕸️'], audioFile: 'V.ogg' },
+            { id: 'oo1', char: 'oo', object: 'Book', emoji: '📖', pos: { top: '45%', left: '68%' }, options: ['📖', '💍', '🦓'], audioFile: 'OO1.ogg' },
+            { id: 'oo2', char: 'OO', object: 'Moon', emoji: '🌕', pos: { top: '90%', left: '78%' }, options: ['🌕', '🚐', '💍'], audioFile: 'OO2.ogg' },
           ]},
           { id: 6, name: "Dragon's Lair", icon: Flame, color: "bg-rose-500", bgImage: "dragon.jpeg", sounds: [
-            { id: 'y', char: 'y', object: 'Yo-yo', emoji: '🪀', pos: { top: '75%', left: '11%' }, options: ['🪀', '🦊', '🧀'] },
-            { id: 'x', char: 'x', object: 'Fox', emoji: '🦊', pos: { top: '20%', left: '80%' }, options: ['🐑', '🦊', '👍'] }, // Ubicado arriba a la derecha ya que no estaba en el dibujo
-            { id: 'ch', char: 'ch', object: 'Cheese', emoji: '🧀', pos: { top: '88%', left: '28%' }, options: ['🧀', '🪀', '🪶'] },
-            { id: 'sh', char: 'sh', object: 'Sheep', emoji: '🐑', pos: { top: '83%', left: '55%' }, options: ['👍', '🐑', '🦊'] },
-            { id: 'th1', char: 'th', object: 'Thumb', emoji: '👍', pos: { top: '55%', left: '74%' }, options: ['👍', '🧀', '🪀'] },
-            { id: 'th2', char: 'TH', object: 'Feather', emoji: '🪶', pos: { top: '88%', left: '88%' }, options: ['🪶', '🐑', '👍'] },
+            { id: 'y', char: 'y', object: 'Yo-yo', emoji: '🪀', pos: { top: '75%', left: '11%' }, options: ['🪀', '🦊', '🧀'], audioFile: 'Y.ogg' },
+            { id: 'x', char: 'x', object: 'Fox', emoji: '🦊', pos: { top: '20%', left: '80%' }, options: ['🐑', '🦊', '👍'], audioFile: 'X.ogg' },
+            { id: 'ch', char: 'ch', object: 'Cheese', emoji: '🧀', pos: { top: '88%', left: '28%' }, options: ['🧀', '🪀', '🪶'], audioFile: 'CH.ogg' },
+            { id: 'sh', char: 'sh', object: 'Sheep', emoji: '🐑', pos: { top: '83%', left: '55%' }, options: ['👍', '🐑', '🦊'], audioFile: 'SH.ogg' },
+            { id: 'th1', char: 'th', object: 'Thumb', emoji: '👍', pos: { top: '55%', left: '74%' }, options: ['👍', '🧀', '🪀'], audioFile: 'TH1.ogg' },
+            { id: 'th2', char: 'TH', object: 'Feather', emoji: '🪶', pos: { top: '88%', left: '88%' }, options: ['🪶', '🐑', '👍'], audioFile: 'TH2.ogg' },
           ]},
           { id: 7, name: "The Castle", icon: CheckCircle2, color: "bg-blue-600", bgImage: "trono.jpeg", sounds: [
-            { id: 'qu', char: 'qu', object: 'Queen', emoji: '👑', pos: { top: '88%', left: '8%' }, options: ['👑', '☁️', '🪙'] },
-            { id: 'ou', char: 'ou', object: 'Cloud', emoji: '☁️', pos: { top: '62%', left: '35%' }, options: ['🛟', '☁️', '🧜‍♀️'] },
-            { id: 'oi', char: 'oi', object: 'Coin', emoji: '🪙', pos: { top: '90%', left: '45%' }, options: ['🪙', '👑', '⭐'] },
-            { id: 'ue', char: 'ue', object: 'Rescue', emoji: '🛟', pos: { top: '68%', left: '57%' }, options: ['⭐', '🛟', '☁️'] },
-            { id: 'er', char: 'er', object: 'Mermaid', emoji: '🧜‍♀️', pos: { top: '90%', left: '72%' }, options: ['🧜‍♀️', '🪙', '👑'] },
-            { id: 'ar', char: 'ar', object: 'Star', emoji: '⭐', pos: { top: '75%', left: '90%' }, options: ['⭐', '🛟', '🧜‍♀️'] },
+            { id: 'qu', char: 'qu', object: 'Queen', emoji: '👑', pos: { top: '88%', left: '8%' }, options: ['👑', '☁️', '🪙'], audioFile: 'QU.ogg' },
+            { id: 'ou', char: 'ou', object: 'Cloud', emoji: '☁️', pos: { top: '62%', left: '35%' }, options: ['🛟', '☁️', '🧜‍♀️'], audioFile: 'OU.ogg' },
+            { id: 'oi', char: 'oi', object: 'Coin', emoji: '🪙', pos: { top: '90%', left: '45%' }, options: ['🪙', '👑', '⭐'], audioFile: 'OI.ogg' },
+            { id: 'ue', char: 'ue', object: 'Rescue', emoji: '🛟', pos: { top: '68%', left: '57%' }, options: ['⭐', '🛟', '☁️'], audioFile: 'UE.ogg' },
+            { id: 'er', char: 'er', object: 'Mermaid', emoji: '🧜‍♀️', pos: { top: '90%', left: '72%' }, options: ['🧜‍♀️', '🪙', '👑'], audioFile: 'ER.ogg' },
+            { id: 'ar', char: 'ar', object: 'Star', emoji: '⭐', pos: { top: '75%', left: '90%' }, options: ['⭐', '🛟', '🧜‍♀️'], audioFile: 'AR.ogg' },
           ]},
         ];
 
@@ -227,12 +219,26 @@
             }
           };
 
-          const playTTS = (text) => {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-GB';
-            utterance.rate = 0.6;
-            window.speechSynthesis.speak(utterance);
+          // Función para reproducir el audio local o usar el generador de voz por defecto
+          const playSound = (input) => {
+            if (typeof input === 'string') {
+              window.speechSynthesis.cancel();
+              const utterance = new SpeechSynthesisUtterance(input);
+              utterance.lang = 'en-GB';
+              utterance.rate = 0.6;
+              window.speechSynthesis.speak(utterance);
+              return;
+            }
+            if (input && input.audioFile) {
+              const audio = new Audio(input.audioFile);
+              audio.play().catch(e => console.log("No se pudo reproducir el archivo local, asegúrate de que existe", e));
+            } else if (input && input.char) {
+              window.speechSynthesis.cancel();
+              const utterance = new SpeechSynthesisUtterance(input.char);
+              utterance.lang = 'en-GB';
+              utterance.rate = 0.6;
+              window.speechSynthesis.speak(utterance);
+            }
           };
 
           // --- TRACING ---
@@ -409,7 +415,7 @@
                   {phase === 1 && (
                     <div className="text-center animate-in zoom-in duration-300">
                        <div className="text-[10rem] md:text-[15rem] font-black text-blue-600 leading-none mb-12 drop-shadow-2xl">{currentSound.char}</div>
-                       <button onClick={() => playTTS(currentSound.char)} className="w-24 h-24 md:w-32 md:h-32 bg-blue-500 hover:bg-blue-400 rounded-full shadow-2xl flex items-center justify-center text-white transition-all"><Volume2 className="w-12 h-12 md:w-16 md:h-16" /></button>
+                       <button onClick={() => playSound(currentSound)} className="w-24 h-24 md:w-32 md:h-32 bg-blue-500 hover:bg-blue-400 rounded-full shadow-2xl flex items-center justify-center text-white transition-all"><Volume2 className="w-12 h-12 md:w-16 md:h-16" /></button>
                        <button onClick={() => setPhase(2)} className="mt-12 block mx-auto px-12 py-4 bg-emerald-500 text-white font-black text-xl md:text-2xl rounded-2xl md:rounded-3xl uppercase">I heard it!</button>
                     </div>
                   )}
@@ -418,7 +424,7 @@
                        <h3 className="text-2xl md:text-3xl font-black text-slate-400 mb-12 uppercase tracking-widest italic">Find the {currentSound.object}</h3>
                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                          {currentSound.options.map((opt, i) => (
-                           <button key={i} onClick={() => opt === currentSound.emoji ? setPhase(3) : playTTS("Try again!")}
+                           <button key={i} onClick={() => opt === currentSound.emoji ? setPhase(3) : playSound("Try again!")}
                             className="aspect-square bg-white border-4 border-slate-200 rounded-[2rem] md:rounded-[3rem] text-7xl md:text-9xl flex items-center justify-center hover:scale-105 shadow-xl transition-all">{opt}</button>
                          ))}
                        </div>
